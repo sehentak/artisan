@@ -32,3 +32,8 @@ outbox/
 #src/translations/*.qm
 #src/help/[!_]*.py
 #doc/help_dialogs/Output_html/[!_]*.html
+
+src/mqtt_pub.py
+src/mqtt_sub.py
+src/modbus_scanner.py
+src/modbus_scanner_2.py
