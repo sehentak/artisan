@@ -141,3 +141,8 @@ pyinstaller-versionfile==2.1.1; platform_system=='Windows' and python_version < 
 pyinstaller-versionfile==3.0.1; platform_system=='Windows' and python_version >= '3.9'
 libusb-package==1.0.26.3; platform_system=='Windows'
 tzdata==2025.2; platform_system=='Windows' and python_version >= '3.9' # to prevent pyinstaller WARNING: Hidden import "tzdata" not found!
+
+# Core MQTT library
+paho-mqtt>=1.6.1
+# SSL certificate bundle (for mqtt.tls_set with HiveMQ / SSL broker)
+certifi>=2024.2.2

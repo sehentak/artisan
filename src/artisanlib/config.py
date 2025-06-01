@@ -3,9 +3,10 @@ import json
 import requests
 from pathlib import Path
 
-CACHE_FILE = Path("/tmp/vulca_config.json")
-MACHINE_ID = os.getenv("MACHINE_ID", "0827522f-7ebf-417a-89eb-cdda11206e4b")
-API_URL = f"https://api.vulca.id/configs/{MACHINE_ID}"
+CACHE_FILE = Path("/tmp/configs.json")
+MACHINE_ID = os.getenv("MACHINE_ID")
+HOST_URL = os.getenv("HOST_URL")
+API_URL = f"{HOST_URL}/configs/{MACHINE_ID}"
 
 def fetch_and_cache_config():
     try:

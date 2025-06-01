@@ -80,7 +80,7 @@ from yaml import safe_load as yaml_load
 from typing import Final, Optional, List, Dict, Tuple, Union, cast, Any, Callable, TYPE_CHECKING  #for Python >= 3.9: can remove 'List' since type hints can now use the generic 'list'
 
 from functools import reduce as freduce
-from interceptor import MqttInterceptor
+from artisanlib.interceptor import MqttInterceptor
 
 try: # activate support for hiDPI screens on Windows
     if str(platform.system()).startswith('Windows'):
