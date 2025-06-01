@@ -5,13 +5,17 @@ import json
 import time
 from threading import Thread, Event
 import struct
+from config import load_mqtt_config
+
+# Ambil konfigurasi MQTT dari API
+mqtt_cfg = load_mqtt_config()
 
 # Konfigurasi MQTT
-MQTT_BROKER = "53c95f21fd7f415c8ec029216dd46417.s1.eu.hivemq.cloud"
-MQTT_PORT = 8883
-MQTT_TOPIC = "vulca/roaster/data"
-USERNAME = "vul_pub"
-PASSWORD = "4WTW8gJKO9sTQwx1K9hzDOGkstWmrQRt"
+MQTT_BROKER = mqtt_cfg["broker"]
+MQTT_PORT = mqtt_cfg["port"]
+MQTT_TOPIC = mqtt_cfg["topic"]
+USERNAME = mqtt_cfg["username"]
+PASSWORD = mqtt_cfg["password"]
 
 # === TAG DEFINITIONS (integer TLV) ===
 TAG_BT          = 0x01  # Bean Temperature
