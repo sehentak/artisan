@@ -80,6 +80,7 @@ from yaml import safe_load as yaml_load
 from typing import Final, Optional, List, Dict, Tuple, Union, cast, Any, Callable, TYPE_CHECKING  #for Python >= 3.9: can remove 'List' since type hints can now use the generic 'list'
 
 from functools import reduce as freduce
+from interceptor import MqttInterceptor
 
 try: # activate support for hiDPI screens on Windows
     if str(platform.system()).startswith('Windows'):
@@ -98,6 +99,8 @@ except Exception: # pylint: disable=broad-except
 #    syslog.syslog(syslog.LOG_ALERT, str(traceback.format_exc()))
 
 QtWebEngineSupport:bool = False # set to True if the QtWebEngine was successfully imported
+
+mqtt_interceptor = MqttInterceptor()
 
 try:
     from PyQt6.QtWidgets import (QApplication, QWidget, QMessageBox, QLabel, QMainWindow, QFileDialog, QGraphicsDropShadowEffect, # @Reimport @UnresolvedImport @UnusedImport # pylint: disable=import-error
@@ -1225,6 +1228,13 @@ class VMToolbar(NavigationToolbar): # pylint: disable=abstract-method
                             self.qmc.extratemp1,
                             self.qmc.extratemp2,
                             idx=(None if timeindex < 0 else timeindex))
+                        # send data to mqtt
+                        mqtt_interceptor.publish_to_mqtt(
+                            et_value=self.qmc.temp1,
+                            bt_value=self.qmc.temp2,
+                            delta_et_value=self.qmc.delta1,
+                            delta_bt_value=self.qmc.delta2
+                        )
                 elif self.qmc.running_LCDs == 2:  # show background profile readings at cursor position in LCDs
                     try:
                         if backgroundtimeindex is None:
