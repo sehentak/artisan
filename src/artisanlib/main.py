@@ -80,6 +80,7 @@ from yaml import safe_load as yaml_load
 from typing import Final, Optional, List, Dict, Tuple, Union, cast, Any, Callable, TYPE_CHECKING  #for Python >= 3.9: can remove 'List' since type hints can now use the generic 'list'
 
 from functools import reduce as freduce
+from vulca.send_data import mqtt_send_tlv
 
 try: # activate support for hiDPI screens on Windows
     if str(platform.system()).startswith('Windows'):
@@ -1225,6 +1226,13 @@ class VMToolbar(NavigationToolbar): # pylint: disable=abstract-method
                             self.qmc.extratemp1,
                             self.qmc.extratemp2,
                             idx=(None if timeindex < 0 else timeindex))
+                        # send data to mqtt
+                        mqtt_send_tlv(
+                            et=self.qmc.temp1,
+                            bt=self.qmc.temp2,
+                            delta_et=self.qmc.delta1,
+                            delta_bt=self.qmc.delta2
+                        )
                 elif self.qmc.running_LCDs == 2:  # show background profile readings at cursor position in LCDs
                     try:
                         if backgroundtimeindex is None:
