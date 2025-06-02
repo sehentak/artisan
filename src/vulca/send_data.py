@@ -5,7 +5,7 @@ import json
 import time
 from threading import Thread, Event
 import struct
-from artisanlib.config import load_mqtt_config
+from vulca.get_config import load_mqtt_config
 
 # Ambil konfigurasi MQTT dari API
 mqtt_cfg = load_mqtt_config()
