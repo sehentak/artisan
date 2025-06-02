@@ -28,10 +28,13 @@ def load_mqtt_config():
     mqtt = config["mqtt"]
     topic_cfg = mqtt["topics"][0]
     pub_cred = next(c for c in topic_cfg["credentials"] if c["type"] == "publisher")
+
+    device_id = MACHINE_ID  # atau config.get("device_id") kalau ada di response
+
     return {
         "broker": mqtt["broker"],
         "port": mqtt["port"],
-        "topic": topic_cfg["topic"],
+        "topic": f"{topic_cfg['topic']}/{device_id}",  # ✨ topic dinamis di sini
         "username": pub_cred["user"],
         "password": pub_cred["pass"],
     }
