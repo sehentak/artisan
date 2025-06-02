@@ -32,12 +32,30 @@ def encode_tlv_int(tag: int, value: int) -> bytes:
     return struct.pack("B", tag) + struct.pack("B", len(val_bytes)) + val_bytes
 
 # === Fungsi untuk kirim data TLV roasting
-def mqtt_send_tlv(et: float, bt: float, delta_et: float, delta_bt: float):
+def mqtt_send_tlv(
+    et: float = 0,
+    bt: float = 0,
+    delta_et: float = 0,
+    delta_bt: float = 0,
+    airflow: int = 0,
+    drum_speed: int = 0,
+    timestamp: int = None
+):
+    """
+    Kirim data roasting dalam format TLV via MQTT.
+    Semua parameter bersifat opsional dan akan default ke 0 jika tidak diberikan.
+    """
+
+    if timestamp is None:
+        timestamp = int(time.time())
+
     payload = (
-        encode_tlv_int(TAG_TIMESTAMP, int(time.time())) +
+        encode_tlv_int(TAG_TIMESTAMP, timestamp) +
         encode_tlv_int(TAG_ET, int(float(et))) +
         encode_tlv_int(TAG_BT, int(float(bt))) +
         encode_tlv_int(TAG_DELTA_BT, int(float(delta_bt))) +
-        encode_tlv_int(TAG_DELTA_ET, int(float(delta_et)))
+        encode_tlv_int(TAG_DELTA_ET, int(float(delta_et))) +
+        encode_tlv_int(TAG_AIRFLOW, int(airflow)) +
+        encode_tlv_int(TAG_DRUMSPEED, int(drum_speed))
     )
     mqtt.send(payload)
