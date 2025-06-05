@@ -71,6 +71,7 @@ from artisanlib.atypes import SerialSettings, BTBreakParams, BbpCache
 # import artisan.plus module
 from plus.util import roastLink
 from plus.queue import addRoast, sendLockSchedule
+from vulca.send_event import mqtt_send_event
 
 try:
     #pylint: disable-next = E, W, R, C
@@ -13012,6 +13013,11 @@ class tgraphcanvas(FigureCanvas):
 
     @pyqtSlot()
     def OnMonitor(self) -> None:
+        try:
+            mqtt_send_event("ON_MONITOR")
+        except Exception as e: # pylint: disable=broad-except
+            _log.exception(e)
+        
         try:
             self.generateNoneTempHints()
             self.block_update = True # block the updating of the bitblit canvas (unblocked at the end of this function to avoid multiple redraws)
