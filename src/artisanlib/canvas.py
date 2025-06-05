@@ -13014,12 +13014,6 @@ class tgraphcanvas(FigureCanvas):
     @pyqtSlot()
     def OnMonitor(self) -> None:
         try:
-            _log.debug('OnMonitor')
-            mqtt_send_event("ON_MONITOR")
-        except Exception as e:
-            _log.exception(e)
-        
-        try:
             self.generateNoneTempHints()
             self.block_update = True # block the updating of the bitblit canvas (unblocked at the end of this function to avoid multiple redraws)
             res = self.reset(redraw=False, soundOn=False, keepProperties=True, onMonitor=True)
@@ -13849,6 +13843,7 @@ class tgraphcanvas(FigureCanvas):
                     return
                 self.aw.soundpopSignal.emit()
                 self.OnMonitor()
+                mqtt_send_event("ON_MONITOR")
         #turn OFF
         else:
             try:
@@ -13856,6 +13851,7 @@ class tgraphcanvas(FigureCanvas):
             except Exception: # pylint: disable=broad-except
                 pass
             self.OffMonitor()
+            mqtt_send_event("OFF_MONITOR")
 
     @pyqtSlot()
     def fireChargeTimer(self) -> None:
