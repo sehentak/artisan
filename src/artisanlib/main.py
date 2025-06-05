@@ -1226,13 +1226,6 @@ class VMToolbar(NavigationToolbar): # pylint: disable=abstract-method
                             self.qmc.extratemp1,
                             self.qmc.extratemp2,
                             idx=(None if timeindex < 0 else timeindex))
-                        # send data to mqtt
-                        mqtt_send_tlv(
-                            et=self.qmc.temp1,
-                            bt=self.qmc.temp2,
-                            delta_et=self.qmc.delta1,
-                            delta_bt=self.qmc.delta2
-                        )
                 elif self.qmc.running_LCDs == 2:  # show background profile readings at cursor position in LCDs
                     try:
                         if backgroundtimeindex is None:
@@ -6288,6 +6281,19 @@ class ApplicationWindow(QMainWindow):  # pyright: ignore [reportGeneralTypeIssue
                     value = (tempX[c][-1] if len(tempX[c])>0 else 0)
             if value is not None:
                 self.moveSVslider(max(0,value),setValue=True)
+        
+        # tambahkan ini di paling akhir fungsi
+        try:
+            mqtt_send_tlv(
+                et=self.qmc.temp1[-1] if self.qmc.temp1 else 0,
+                bt=self.qmc.temp2[-1] if self.qmc.temp2 else 0,
+                delta_et=self.qmc.delta1[-1] if self.qmc.delta1 else 0,
+                delta_bt=self.qmc.delta2[-1] if self.qmc.delta2 else 0,
+                airflow=self.slider3.value() if hasattr(self, "slider3") else 0,
+                drum_speed=self.slider4.value() if hasattr(self, "slider4") else 0
+            )
+        except Exception as e:
+            _log.warning("Failed to send MQTT TLV: %s", e)
 
 
 
