@@ -1,5 +1,4 @@
-from vulca.get_config import load_mqtt_config
-from vulca.mqtt_helper import VulcaMQTT
+from vulca.mqtt_instance import mqtt
 import struct
 import time
 
@@ -14,17 +13,6 @@ TAG_TIMESTAMP = 0x07
 TAG_DELTA_BT  = 0x08
 TAG_DELTA_ET  = 0x09
 TAG_TIMER     = 0x0A
-
-# === Singleton MQTT Client (loaded 1x)
-mqtt_cfg = load_mqtt_config()
-mqtt = VulcaMQTT(
-    broker=mqtt_cfg["broker"],
-    port=mqtt_cfg["port"],
-    username=mqtt_cfg["username"],
-    password=mqtt_cfg["password"],
-    topic=mqtt_cfg["topic"],
-    use_queue=True
-)
 
 # === Encode TLV util
 def encode_tlv_int(tag: int, value: int) -> bytes:

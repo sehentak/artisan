@@ -65,6 +65,11 @@ class VulcaMQTT:
         if rc == 0:
             self._connected = True
             print("[MQTT] Connected successfully.")
+            try:
+                from vulca.send_heartbeat import start_heartbeat
+                start_heartbeat()
+            except Exception as e:
+                print(f"[MQTT] Failed to start heartbeat: {e}")
         else:
             print(f"[MQTT] Failed to connect with RC={rc}")
 
