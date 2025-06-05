@@ -40,3 +40,4 @@ src/modbus_scanner_2.py
 src/tmp/configs.json
 src/vulca/tmp/configs.json
 tmp/configs.json
+src/session_id.txt
