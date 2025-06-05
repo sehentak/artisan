@@ -13015,11 +13015,13 @@ class tgraphcanvas(FigureCanvas):
     def OnMonitor(self) -> None:
         try:
             next_state = not self.monitorflag
+            print(f"[DEBUG] Triggering MQTT event: {'ON_MONITOR' if next_state else 'OFF_MONITOR'}")
             if next_state:
                 mqtt_send_event("ON_MONITOR")
             else:
                 mqtt_send_event("OFF_MONITOR")
         except Exception as e:
+            print(f"[ERROR] Failed to send event: {e}")
             _log.exception(e)
         
         try:
