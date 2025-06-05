@@ -71,7 +71,10 @@ from artisanlib.atypes import SerialSettings, BTBreakParams, BbpCache
 # import artisan.plus module
 from plus.util import roastLink
 from plus.queue import addRoast, sendLockSchedule
+
+# import vulca module
 from vulca.send_event import mqtt_send_event
+from vulca.session_store import create_session_id, clear_session_id
 
 try:
     #pylint: disable-next = E, W, R, C
@@ -13902,6 +13905,8 @@ class tgraphcanvas(FigureCanvas):
                     pass
 
             self.resetTimer() #reset time, otherwise the recorded timestamps append to the time on START after ON!
+            create_session_id()
+            mqtt_send_event("START_RECORD")
 
             self.flagstart = True
 
@@ -14000,6 +14005,8 @@ class tgraphcanvas(FigureCanvas):
             self.aw.enableSaveActions()
             self.aw.resetCurveVisibilities()
             self.flagstart = False
+            mqtt_send_event('STOP_RECORD')
+            clear_session_id()
             if self.aw.simulator:
                 self.aw.buttonSTARTSTOP.setStyleSheet(self.aw.pushbuttonstyles_simulator['STOP'])
             else:
