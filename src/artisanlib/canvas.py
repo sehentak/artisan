@@ -189,6 +189,7 @@ class tgraphcanvas(FigureCanvas):
     showBackgroundEventsSignal = pyqtSignal(bool)
     redrawSignal = pyqtSignal(bool,bool,bool,bool,bool)
     redrawKeepViewSignal = pyqtSignal(bool,bool,bool,bool,bool)
+    monitorOn = pyqtSignal(bool)
 
     umlaute_dict : Final[Dict[str, str]] = {
        uchr(228): 'ae',  # U+00E4   \xc3\xa4
@@ -13846,6 +13847,7 @@ class tgraphcanvas(FigureCanvas):
                     return
                 self.aw.soundpopSignal.emit()
                 self.OnMonitor()
+                self.monitorOn = True
                 mqtt_send_event("ON_MONITOR")
         #turn OFF
         else:
@@ -13854,6 +13856,7 @@ class tgraphcanvas(FigureCanvas):
             except Exception: # pylint: disable=broad-except
                 pass
             self.OffMonitor()
+            self.monitorOn = False
             mqtt_send_event("OFF_MONITOR")
 
     @pyqtSlot()
@@ -13905,6 +13908,11 @@ class tgraphcanvas(FigureCanvas):
                     pass
 
             self.resetTimer() #reset time, otherwise the recorded timestamps append to the time on START after ON!
+
+            if self.monitorOn != True:
+                self.monitorOn = True
+                mqtt_send_event("ON_MONITOR")
+
             create_session_id()
             mqtt_send_event("START_RECORD")
 
