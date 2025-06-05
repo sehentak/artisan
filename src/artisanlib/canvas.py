@@ -13014,11 +13014,12 @@ class tgraphcanvas(FigureCanvas):
     @pyqtSlot()
     def OnMonitor(self) -> None:
         try:
-            if self.monitorflag:
+            next_state = not self.monitorflag
+            if next_state:
                 mqtt_send_event("ON_MONITOR")
             else:
                 mqtt_send_event("OFF_MONITOR")
-        except Exception as e: # pylint: disable=broad-except
+        except Exception as e:
             _log.exception(e)
         
         try:
