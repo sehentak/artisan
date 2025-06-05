@@ -13013,8 +13013,11 @@ class tgraphcanvas(FigureCanvas):
 
     @pyqtSlot()
     def OnMonitor(self) -> None:
-        print("[DEBUG] OnMonitor DIPANGGIL")
-        mqtt_send_event("ON_MONITOR")
+        try:
+            _log.debug('OnMonitor')
+            mqtt_send_event("ON_MONITOR")
+        except Exception as e:
+            _log.exception(e)
         
         try:
             self.generateNoneTempHints()
