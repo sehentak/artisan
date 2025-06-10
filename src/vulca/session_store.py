@@ -1,21 +1,63 @@
 import os
 import uuid
+import threading
+import requests
 
 SESSION_FILE = os.path.join(os.path.dirname(__file__), "../session_id.txt")
+MACHINE_ID = os.getenv("MACHINE_ID")
+USER_ID = os.getenv("USER_ID", None)
+HOST_URL = os.getenv("HOST_URL")
+API_PRECREATE_URL = f"{HOST_URL}/batches"
+API_STOP_URL = f"{API_PRECREATE_URL}/stop"
+
+def post_precreate(session_id: str):
+    """
+    Kirim precreate batch ke server.
+    """
+    try:
+        payload = {
+            "uuid": session_id,
+            "machine_id": MACHINE_ID
+        }
+        if USER_ID:
+            payload["user_id"] = USER_ID
+
+        requests.post(API_PRECREATE_URL, json=payload, timeout=3)
+    except Exception as e:
+        print(f"[session_id] Precreate API failed: {e}")
+
+def post_stop_session(session_id: str):
+    """
+    Kirim request untuk menandai batch sebagai stop.
+    """
+    try:
+        payload = {"uuid": session_id}
+        requests.post(API_STOP_URL, json=payload, timeout=3)
+    except Exception as e:
+        print(f"[session_id] Stop API failed: {e}")
 
 def create_session_id():
     """
-    Generate UUID v4 dan simpan ke file. Return session ID tersebut.
+    Generate UUID v4, simpan ke file, dan post ke API precreate.
+    Return session ID tersebut.
     """
     session_id = str(uuid.uuid4())
+
     with open(SESSION_FILE, "w") as f:
         f.write(session_id)
+
+    threading.Thread(target=post_precreate, args=(session_id,), daemon=True).start()
     return session_id
 
+def stop_session_id():
+    """
+    Ambil session ID dari file dan kirim ke API stop.
+    """
+    session_id = load_session_id()
+    if session_id:
+        threading.Thread(target=post_stop_session, args=(session_id,), daemon=True).start()
+
 def load_session_id() -> str:
-    """
-    Ambil session ID dari file. Return "" jika tidak ada.
-    """
     if not os.path.exists(SESSION_FILE):
         return ""
     with open(SESSION_FILE, "r") as f:
