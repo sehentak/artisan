@@ -1,19 +1,6 @@
 from vulca.mqtt_instance import mqtt
-import struct
+from vulca.tlv_util import encode_tlv_int, encode_tlv_str, TAG_EVENT, TAG_TIMESTAMP
 import time
-
-# === TAG DEFINITIONS ===
-TAG_EVENT     = 0x10
-TAG_TIMESTAMP = 0x07
-
-# === Encode TLV util
-def encode_tlv_str(tag: int, value: str) -> bytes:
-    val_bytes = value.encode("utf-8")
-    return struct.pack("B", tag) + struct.pack("B", len(val_bytes)) + val_bytes
-
-def encode_tlv_int(tag: int, value: int) -> bytes:
-    val_bytes = struct.pack(">I", value)
-    return struct.pack("B", tag) + struct.pack("B", len(val_bytes)) + val_bytes
 
 # === Fungsi untuk kirim event TLV
 def mqtt_send_event(event: str, timestamp: int = None):

@@ -1,23 +1,11 @@
 from vulca.mqtt_instance import mqtt
-import struct
+from vulca.tlv_util import (
+    encode_tlv_int,
+    TAG_TIMESTAMP, TAG_ET, TAG_BT,
+    TAG_DELTA_ET, TAG_DELTA_BT,
+    TAG_AIRFLOW, TAG_DRUMSPEED
+)
 import time
-
-# === TAG DEFINITIONS ===
-TAG_BT        = 0x01
-TAG_LIMIT_BT  = 0x02
-TAG_ET        = 0x03
-TAG_LIMIT_ET  = 0x04
-TAG_AIRFLOW   = 0x05
-TAG_DRUMSPEED = 0x06
-TAG_TIMESTAMP = 0x07
-TAG_DELTA_BT  = 0x08
-TAG_DELTA_ET  = 0x09
-TAG_TIMER     = 0x0A
-
-# === Encode TLV util
-def encode_tlv_int(tag: int, value: int) -> bytes:
-    val_bytes = struct.pack(">I", value)
-    return struct.pack("B", tag) + struct.pack("B", len(val_bytes)) + val_bytes
 
 # === Fungsi untuk kirim data TLV roasting
 def mqtt_send_tlv(

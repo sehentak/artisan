@@ -74,6 +74,7 @@ from plus.queue import addRoast, sendLockSchedule
 
 # import vulca module
 from vulca.send_event import mqtt_send_event
+from vulca.send_event_api import send_event_to_api
 from vulca.session_store import create_session_id, clear_session_id
 
 try:
@@ -13849,6 +13850,7 @@ class tgraphcanvas(FigureCanvas):
                 self.OnMonitor()
                 self.monitorOn = True
                 mqtt_send_event("ON_MONITOR")
+                send_event_to_api("ON_MONITOR")
         #turn OFF
         else:
             try:
@@ -13858,6 +13860,7 @@ class tgraphcanvas(FigureCanvas):
             self.OffMonitor()
             self.monitorOn = False
             mqtt_send_event("OFF_MONITOR")
+            send_event_to_api("OFF_MONITOR")
 
     @pyqtSlot()
     def fireChargeTimer(self) -> None:
@@ -13912,9 +13915,11 @@ class tgraphcanvas(FigureCanvas):
             if self.monitorOn != True:
                 self.monitorOn = True
                 mqtt_send_event("ON_MONITOR")
+                send_event_to_api("ON_MONITOR")
 
             create_session_id()
             mqtt_send_event("START_RECORD")
+            send_event_to_api("START_RECORD")
 
             self.flagstart = True
 
@@ -14014,6 +14019,7 @@ class tgraphcanvas(FigureCanvas):
             self.aw.resetCurveVisibilities()
             self.flagstart = False
             mqtt_send_event('STOP_RECORD')
+            send_event_to_api('STOP_RECORD')
             clear_session_id()
             if self.aw.simulator:
                 self.aw.buttonSTARTSTOP.setStyleSheet(self.aw.pushbuttonstyles_simulator['STOP'])
