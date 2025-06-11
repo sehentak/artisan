@@ -8,6 +8,16 @@ from vulca.tlv_util import (
     TAG_AIRFLOW, TAG_DRUMSPEED
 )
 
+import logging
+
+logging.basicConfig(
+    filename='/tmp/debug_event.log',
+    filemode='a',  # tambahkan log, jangan timpa file
+    level=logging.DEBUG,
+    format='[%(asctime)s] %(levelname)s: %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
+
 # Tag baru untuk session_id
 TAG_SESSION_ID = 0x20
 
@@ -33,6 +43,9 @@ def mqtt_send_tlv(
     Kirim data roasting dalam format TLV via MQTT.
     Semua parameter bersifat opsional dan akan default ke 0 jika tidak diberikan.
     """
+
+    logging.debug(f"Sending TLV: ET={et}, BT={bt}, DELTA_ET={delta_et}, DELTA_BT={delta_bt}, Airflow={airflow}, DrumSpeed={drum_speed}")
+    logging.debug(f"TLV Payload: {payload.hex()}")
 
     if timestamp is None:
         timestamp = int(time.time())
