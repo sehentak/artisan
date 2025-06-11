@@ -91,6 +91,16 @@ try: # activate support for hiDPI screens on Windows
 except Exception: # pylint: disable=broad-except
     pass
 
+import logging
+
+logging.basicConfig(
+    filename='/tmp/debug_event.log',
+    filemode='a',  # tambahkan log, jangan timpa file
+    level=logging.DEBUG,
+    format='[%(asctime)s] %(levelname)s: %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
+
 # write logtrace to Console on OS X:
 #try:
 #..
