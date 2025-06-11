@@ -41,6 +41,8 @@ def create_session_id():
     Generate UUID v4, simpan ke file, dan post ke API precreate.
     Return session ID tersebut.
     """
+    clear_session_id()
+
     session_id = str(uuid.uuid4())
 
     with open(SESSION_FILE, "w") as f:

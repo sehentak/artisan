@@ -47,6 +47,8 @@ from artisanlib import __release_sponsor_name__
 
 import os
 import sys  # @UnusedImport
+import subprocess
+import uuid
 import getpass
 import ast
 import platform
@@ -16901,6 +16903,16 @@ class ApplicationWindow(QMainWindow):  # pyright: ignore [reportGeneralTypeIssue
                     self.serialize(filename, cast(Dict[str,Any], pf))
                     self.sendmessage(QApplication.translate('Message','Profile saved'))
                     _log.info('profile saved: %s', filename)
+
+                    try:
+                        from vulca.send_alog_api import send_alog_to_api  # [MODULAR]
+                        with open(filename, "r", encoding="utf-8") as f:
+                            alog_content = f.read()
+                        send_alog_to_api(alog_content)
+                        _log.info("[Alog Upload] Triggered send_alog_to_api()")
+                    except Exception as err:
+                        _log.error(f"[Alog Upload] Gagal kirim alog: {err}")
+
                     if not copy:
                         self.setCurrentFile(filename)
                         self.curFile = filename
