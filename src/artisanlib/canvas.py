@@ -75,7 +75,7 @@ from plus.queue import addRoast, sendLockSchedule
 # import vulca module
 from vulca.send_event import mqtt_send_event
 from vulca.send_event_api import send_event_to_api
-from vulca.session_store import create_session_id, clear_session_id
+from vulca.session_store import create_session_id
 
 try:
     #pylint: disable-next = E, W, R, C
@@ -14020,7 +14020,6 @@ class tgraphcanvas(FigureCanvas):
             self.flagstart = False
             mqtt_send_event('STOP_RECORD')
             send_event_to_api('STOP_RECORD')
-            clear_session_id()
             if self.aw.simulator:
                 self.aw.buttonSTARTSTOP.setStyleSheet(self.aw.pushbuttonstyles_simulator['STOP'])
             else:
