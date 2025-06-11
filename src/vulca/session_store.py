@@ -1,4 +1,5 @@
 import os
+import time
 import uuid
 import threading
 import requests
@@ -9,6 +10,7 @@ USER_ID = os.getenv("USER_ID", None)
 HOST_URL = os.getenv("HOST_URL")
 API_PRECREATE_URL = f"{HOST_URL}/batches"
 API_STOP_URL = f"{API_PRECREATE_URL}/stop"
+LOG_FILE = "/tmp/debug_event.log"
 
 def post_precreate(session_id: str):
     """
@@ -19,12 +21,34 @@ def post_precreate(session_id: str):
             "uuid": session_id,
             "machine_id": MACHINE_ID
         }
-        if USER_ID:
-            payload["user_id"] = USER_ID
-
-        requests.post(API_PRECREATE_URL, json=payload, timeout=3)
     except Exception as e:
-        print(f"[session_id] Precreate API failed: {e}")
+        log = (
+            f"\n[{time.strftime('%Y-%m-%d %H:%M:%S')}] ERROR\n"
+            f"Request JSON : {payload}\n"
+            f"Exception     : {e}\n"
+        )
+
+    try:
+        response = requests.post(API_PRECREATE_URL, json=payload, timeout=3)
+        log = (
+            f"\n[{time.strftime('%Y-%m-%d %H:%M:%S')}] EVENT SENT\n"
+            f"Request JSON : {payload}\n"
+            f"Response Code: {response.status_code}\n"
+            f"Response Body: {response.text}\n"
+        )
+    except Exception as e:
+        log = (
+            f"\n[{time.strftime('%Y-%m-%d %H:%M:%S')}] ERROR\n"
+            f"Request JSON : {payload}\n"
+            f"Exception     : {e}\n"
+        )
+
+    try:
+        with open(LOG_FILE, "a") as f:
+            f.write(log)
+    except Exception as file_err:
+        # optional: fallback log
+        print(f"Failed to write to log file: {file_err}")
 
 def post_stop_session(session_id: str):
     """
