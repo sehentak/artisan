@@ -47,8 +47,7 @@ from artisanlib import __release_sponsor_name__
 
 import os
 import sys  # @UnusedImport
-import subprocess
-import uuid
+import logging
 import getpass
 import ast
 import platform
@@ -4296,9 +4295,6 @@ class ApplicationWindow(QMainWindow):  # pyright: ignore [reportGeneralTypeIssue
         self.zoomInShortcut.activated.connect(self.zoomIn)
         self.zoomOutShortcut = QShortcut(QKeySequence.StandardKey.ZoomOut, self)
         self.zoomOutShortcut.activated.connect(self.zoomOut)
-    
-        from PyQt6.QtCore import QTimer
-        import logging
 
         # Timer untuk kirim data TLV ke MQTT setiap detik
         self.mqtt_timer = QTimer(self)
@@ -6297,8 +6293,6 @@ class ApplicationWindow(QMainWindow):  # pyright: ignore [reportGeneralTypeIssue
         try:
             if not self.qmc.flagstart:
                 return  # hanya kirim kalau sedang roasting aktif
-
-            from vulca.send_data import mqtt_send_tlv
 
             mqtt_send_tlv(
                 et=self.qmc.temp1[-1] if self.qmc.temp1 else 0,
