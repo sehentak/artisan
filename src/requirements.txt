@@ -146,3 +146,4 @@ tzdata==2025.2; platform_system=='Windows' and python_version >= '3.9' # to prev
 paho-mqtt>=1.6.1
 # SSL certificate bundle (for mqtt.tls_set with HiveMQ / SSL broker)
 certifi>=2024.2.2
+python-dateutil>=1.17.0
