@@ -20,7 +20,7 @@ logging.basicConfig(
 
 # Tag baru untuk session_id
 TAG_SESSION_ID = 0x20
-
+MACHINE_ID = os.getenv("MACHINE_ID")
 SESSION_FILE = os.path.join(os.path.dirname(__file__), "../session_id.txt")
 
 def load_session_id():
@@ -64,4 +64,4 @@ def mqtt_send_tlv(
     if session_id:
         payload += encode_tlv_str(TAG_SESSION_ID, session_id)
 
-    mqtt.send(payload)
+    mqtt.send(payload, 'vulca/roasting/' + MACHINE_ID)
