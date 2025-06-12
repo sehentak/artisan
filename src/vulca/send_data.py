@@ -44,24 +44,28 @@ def mqtt_send_tlv(
     Semua parameter bersifat opsional dan akan default ke 0 jika tidak diberikan.
     """
 
-    logging.info(f"Sending TLV: ET={et}, BT={bt}, DELTA_ET={delta_et}, DELTA_BT={delta_bt}, Airflow={airflow}, DrumSpeed={drum_speed}")
-    logging.info(f"TLV Payload: {payload.hex()}")
+    try:
+        logging.info(f"Sending TLV: ET={et}, BT={bt}, DELTA_ET={delta_et}, DELTA_BT={delta_bt}, Airflow={airflow}, DrumSpeed={drum_speed}")
+        logging.info(f"TLV Payload: {payload.hex()}")
 
-    if timestamp is None:
-        timestamp = int(time.time())
+        if timestamp is None:
+            timestamp = int(time.time())
 
-    payload = (
-        encode_tlv_int(TAG_TIMESTAMP, timestamp) +
-        encode_tlv_int(TAG_ET, int(float(et))) +
-        encode_tlv_int(TAG_BT, int(float(bt))) +
-        encode_tlv_int(TAG_DELTA_BT, int(float(delta_bt))) +
-        encode_tlv_int(TAG_DELTA_ET, int(float(delta_et))) +
-        encode_tlv_int(TAG_AIRFLOW, int(airflow)) +
-        encode_tlv_int(TAG_DRUMSPEED, int(drum_speed))
-    )
+        payload = (
+            encode_tlv_int(TAG_TIMESTAMP, timestamp) +
+            encode_tlv_int(TAG_ET, int(float(et))) +
+            encode_tlv_int(TAG_BT, int(float(bt))) +
+            encode_tlv_int(TAG_DELTA_BT, int(float(delta_bt))) +
+            encode_tlv_int(TAG_DELTA_ET, int(float(delta_et))) +
+            encode_tlv_int(TAG_AIRFLOW, int(airflow)) +
+            encode_tlv_int(TAG_DRUMSPEED, int(drum_speed))
+        )
 
-    session_id = load_session_id()
-    if session_id:
-        payload += encode_tlv_str(TAG_SESSION_ID, session_id)
+        session_id = load_session_id()
+        if session_id:
+            payload += encode_tlv_str(TAG_SESSION_ID, session_id)
 
-    mqtt.send(payload, 'vulca/roasting/' + MACHINE_ID)
+        mqtt.send(payload, 'vulca/roasting/' + MACHINE_ID)
+    except Exception as e:
+        logging.error(f"Error sending TLV: {e}")
+        return
