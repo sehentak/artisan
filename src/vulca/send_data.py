@@ -1,5 +1,7 @@
 import os
 import time
+import logging
+from typing import Final
 from vulca.mqtt_instance import mqtt
 from vulca.tlv_util import (
     encode_tlv_int, encode_tlv_str,  # pastikan encode_tlv_str ada
@@ -8,15 +10,7 @@ from vulca.tlv_util import (
     TAG_AIRFLOW, TAG_DRUMSPEED
 )
 
-import logging
-
-logging.basicConfig(
-    filename='/tmp/debug_event.log',
-    filemode='a',  # tambahkan log, jangan timpa file
-    level=logging.DEBUG,
-    format='[%(asctime)s] %(levelname)s: %(message)s',
-    datefmt='%Y-%m-%d %H:%M:%S'
-)
+_log: Final[logging.Logger] = logging.getLogger(__name__)
 
 # Tag baru untuk session_id
 TAG_SESSION_ID = 0x20
@@ -43,11 +37,7 @@ def mqtt_send_tlv(
     Kirim data roasting dalam format TLV via MQTT.
     Semua parameter bersifat opsional dan akan default ke 0 jika tidak diberikan.
     """
-
     try:
-        logging.info(f"Sending TLV: ET={et}, BT={bt}, DELTA_ET={delta_et}, DELTA_BT={delta_bt}, Airflow={airflow}, DrumSpeed={drum_speed}")
-        logging.info(f"TLV Payload: {payload.hex()}")
-
         if timestamp is None:
             timestamp = int(time.time())
 
@@ -65,7 +55,6 @@ def mqtt_send_tlv(
         if session_id:
             payload += encode_tlv_str(TAG_SESSION_ID, session_id)
 
-        mqtt.send(payload, 'vulca/roasting/' + MACHINE_ID)
+        mqtt.send(payload, topic='vulca/roasting/' + MACHINE_ID)
     except Exception as e:
-        logging.error(f"Error sending TLV: {e}")
-        return
+        _log.exception(e)
