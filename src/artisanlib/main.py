@@ -6290,8 +6290,10 @@ class ApplicationWindow(QMainWindow):  # pyright: ignore [reportGeneralTypeIssue
 
 
     def send_mqtt_data(self):
+        print("🚀 mqtt_send_tlv timer trigger!")
         try:
             if not self.qmc.flagstart:
+                print("⚠️ mqtt_send_tlv() skipped because not roasting yet.")
                 return  # hanya kirim kalau sedang roasting aktif
 
             mqtt_send_tlv(
