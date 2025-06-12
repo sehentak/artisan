@@ -5236,6 +5236,17 @@ class tgraphcanvas(FigureCanvas):
             self.aw.lcd5.display(deltabtstr)
 
             try:
+                mqtt_send_tlv(
+                    et=float(etstr),
+                    bt=float(btstr),
+                    delta_et=float(deltaetstr),
+                    delta_bt=float(deltabtstr),
+                    timestamp=int(libtime.time())
+                )
+            except Exception as e:
+                _log.exception(e)
+
+            try:
                 self.updateLargeDeltaLCDs(deltabt=deltabtstr,deltaet=deltaetstr)
             except Exception as e: # pylint: disable=broad-except
                 _log.exception(e)
@@ -5320,17 +5331,6 @@ class tgraphcanvas(FigureCanvas):
             self.updateLargeExtraLCDs(extra1=extra1_values,extra2=extra2_values)
 
         except Exception as e: # pylint: disable=broad-except
-            _log.exception(e)
-
-        try:
-            mqtt_send_tlv(
-                et=float(etstr),
-                bt=float(btstr),
-                delta_et=float(deltaetstr),
-                delta_bt=float(deltabtstr),
-                timestamp=int(libtime.time())
-            )
-        except Exception as e:
             _log.exception(e)
 
 
