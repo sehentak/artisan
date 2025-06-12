@@ -5322,21 +5322,16 @@ class tgraphcanvas(FigureCanvas):
         except Exception as e: # pylint: disable=broad-except
             _log.exception(e)
 
-        if idx is not None and 0 <= idx < len(temp1) and 0 <= idx < len(temp2):
-            et_val = temp1[idx] if temp1[idx] not in [None, -1] else 0
-            bt_val = temp2[idx] if temp2[idx] not in [None, -1] else 0
-            delta_et_val = delta1[idx] if delta1 and delta1[idx] not in [None, -1] else 0
-            delta_bt_val = delta2[idx] if delta2 and delta2[idx] not in [None, -1] else 0
-
+        try:
             mqtt_send_tlv(
-                et=et_val,
-                bt=bt_val,
-                delta_et=delta_et_val,
-                delta_bt=delta_bt_val,
-                airflow=self.aw.airflow_rpm if hasattr(self.aw, "airflow_rpm") else 0,
-                drum_speed=self.aw.drumspeed_rpm if hasattr(self.aw, "drumspeed_rpm") else 0,
+                et=float(etstr),
+                bt=float(btstr),
+                delta_et=float(deltaetstr),
+                delta_bt=float(deltabtstr),
                 timestamp=int(libtime.time())
             )
+        except Exception as e:
+            _log.exception(e)
 
 
     # runs from GUI thread.
