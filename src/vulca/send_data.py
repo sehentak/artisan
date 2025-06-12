@@ -1,5 +1,7 @@
 import os
 import time
+import logging
+from typing import Final
 from vulca.mqtt_instance import mqtt
 from vulca.tlv_util import (
     encode_tlv_int, encode_tlv_str,  # pastikan encode_tlv_str ada
@@ -8,11 +10,12 @@ from vulca.tlv_util import (
     TAG_AIRFLOW, TAG_DRUMSPEED
 )
 
+_log: Final[logging.Logger] = logging.getLogger(__name__)
+
 # Tag baru untuk session_id
 TAG_SESSION_ID = 0x20
 MACHINE_ID = os.getenv("MACHINE_ID")
 SESSION_FILE = os.path.join(os.path.dirname(__file__), "../session_id.txt")
-LOG_FILE = "/tmp/debug_event.log"
 
 def load_session_id():
     if not os.path.exists(SESSION_FILE):
@@ -34,11 +37,6 @@ def mqtt_send_tlv(
     Kirim data roasting dalam format TLV via MQTT.
     Semua parameter bersifat opsional dan akan default ke 0 jika tidak diberikan.
     """
-
-    log = (
-        f"\n[{time.strftime('%Y-%m-%d %H:%M:%S')}] MQTT SEND TLV\n"
-    )
-    
     try:
         if timestamp is None:
             timestamp = int(time.time())
@@ -57,14 +55,6 @@ def mqtt_send_tlv(
         if session_id:
             payload += encode_tlv_str(TAG_SESSION_ID, session_id)
 
-        log += f"Payload: {payload}\n"
         mqtt.send(payload, topic='vulca/roasting/' + MACHINE_ID)
     except Exception as e:
-        log += f"Error: {e}\n"
-    
-    try:
-        with open(LOG_FILE, "a") as f:
-            f.write(log)
-    except Exception as file_err:
-        # optional: fallback log
-        print(f"Failed to write to log file: {file_err}")
+        _log.exception(e)
