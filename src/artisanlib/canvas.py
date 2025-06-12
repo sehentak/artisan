@@ -5191,6 +5191,11 @@ class tgraphcanvas(FigureCanvas):
                 if self.aw.largeLCDs_dialog is not None:
                     self.updateLargeLCDsTimeSignal.emit(timestr)
 
+            etFloat: float = 0
+            btFloat: float = 0
+            deltaEtFloat: float = 0
+            deltaBtFloat: float = 0
+
             ## ET LCD:
             etstr = resLCD
             try: # if temp1 is None, which should never be the case, this fails
@@ -5200,6 +5205,10 @@ class tgraphcanvas(FigureCanvas):
                     elif self.LCDdecimalplaces and -10000 < temp1[idx] < 100000:
                         etstr = f'{temp1[idx]:.0f}'
             except Exception as e: # pylint: disable=broad-except
+                _log.exception(e)
+            try:
+                etFloat = float(etstr)
+            except Exception as e:
                 _log.exception(e)
             self.aw.lcd2.display(etstr)
 
@@ -5212,6 +5221,10 @@ class tgraphcanvas(FigureCanvas):
                     elif self.LCDdecimalplaces and -10000 < temp2[idx] < 100000:
                         btstr = f'{temp2[idx]:.0f}'
             except Exception as e: # pylint: disable=broad-except
+                _log.exception(e)
+            try:
+                btFloat = float(btstr)
+            except Exception as e:
                 _log.exception(e)
             self.aw.lcd3.display(btstr)
 
@@ -5232,15 +5245,23 @@ class tgraphcanvas(FigureCanvas):
                         deltabtstr = lcdformat%d2        # rate of change BT (degrees per minute)
             except Exception as e: # pylint: disable=broad-except
                 _log.exception(e)
+            try:
+                deltaEtFloat = float(deltaetstr)
+            except Exception as e:
+                _log.exception(e)
+            try:
+                deltaBtFloat = float(deltabtstr)
+            except Exception as e:
+                _log.exception(e)
             self.aw.lcd4.display(deltaetstr)
             self.aw.lcd5.display(deltabtstr)
 
             try:
                 mqtt_send_tlv(
-                    et=float(etstr),
-                    bt=float(btstr),
-                    delta_et=float(deltaetstr),
-                    delta_bt=float(deltabtstr),
+                    et=etFloat,
+                    bt=btFloat,
+                    delta_et=deltaEtFloat,
+                    delta_bt=deltaBtFloat,
                     timestamp=int(libtime.time())
                 )
             except Exception as e:
