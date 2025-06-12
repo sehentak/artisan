@@ -81,7 +81,6 @@ from yaml import safe_load as yaml_load
 from typing import Final, Optional, List, Dict, Tuple, Union, cast, Any, Callable, TYPE_CHECKING  #for Python >= 3.9: can remove 'List' since type hints can now use the generic 'list'
 
 from functools import reduce as freduce
-from vulca.send_data import mqtt_send_tlv
 
 try: # activate support for hiDPI screens on Windows
     if str(platform.system()).startswith('Windows'):
@@ -4296,11 +4295,6 @@ class ApplicationWindow(QMainWindow):  # pyright: ignore [reportGeneralTypeIssue
         self.zoomOutShortcut = QShortcut(QKeySequence.StandardKey.ZoomOut, self)
         self.zoomOutShortcut.activated.connect(self.zoomOut)
 
-        # Timer untuk kirim data TLV ke MQTT setiap detik
-        self.mqtt_timer = QTimer(self)
-        self.mqtt_timer.timeout.connect(self.send_mqtt_data)
-        self.mqtt_timer.start(1000)  # 1000 ms = 1 detik
-
     def scale_connected_handler(self, scale_id:str, scale_name:str) -> None:
         if scale_name:
             name = (self.getScaleName((scale_name, scale_id)) if scale_id else scale_name)
@@ -6287,27 +6281,6 @@ class ApplicationWindow(QMainWindow):  # pyright: ignore [reportGeneralTypeIssue
                     value = (tempX[c][-1] if len(tempX[c])>0 else 0)
             if value is not None:
                 self.moveSVslider(max(0,value),setValue=True)
-
-
-    def send_mqtt_data(self):
-        print("🚀 mqtt_send_tlv timer trigger!")
-        try:
-            if not self.qmc.flagstart:
-                print("⚠️ mqtt_send_tlv() skipped because not roasting yet.")
-                return  # hanya kirim kalau sedang roasting aktif
-
-            mqtt_send_tlv(
-                et=self.qmc.temp1[-1] if self.qmc.temp1 else 0,
-                bt=self.qmc.temp2[-1] if self.qmc.temp2 else 0,
-                delta_et=self.qmc.delta1[-1] if self.qmc.delta1 else 0,
-                delta_bt=self.qmc.delta2[-1] if self.qmc.delta2 else 0,
-                airflow=self.slider3.value() if hasattr(self, "slider3") else 0,
-                drum_speed=self.slider4.value() if hasattr(self, "slider4") else 0
-            )
-            logging.debug("✅ mqtt_send_tlv() sent successfully.")
-        except Exception as e:
-            logging.warning(f"⚠️ Failed to send MQTT TLV: {e}")
-
 
     # signalled from the sampling thread via process_active_quantifiers, but runs in the GUI thread (required for this moveslider call!)
     @pyqtSlot(int,float)
