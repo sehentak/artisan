@@ -44,8 +44,8 @@ def mqtt_send_tlv(
     Semua parameter bersifat opsional dan akan default ke 0 jika tidak diberikan.
     """
 
-    logging.debug(f"Sending TLV: ET={et}, BT={bt}, DELTA_ET={delta_et}, DELTA_BT={delta_bt}, Airflow={airflow}, DrumSpeed={drum_speed}")
-    logging.debug(f"TLV Payload: {payload.hex()}")
+    logging.info(f"Sending TLV: ET={et}, BT={bt}, DELTA_ET={delta_et}, DELTA_BT={delta_bt}, Airflow={airflow}, DrumSpeed={drum_speed}")
+    logging.info(f"TLV Payload: {payload.hex()}")
 
     if timestamp is None:
         timestamp = int(time.time())

@@ -5331,15 +5331,7 @@ class tgraphcanvas(FigureCanvas):
                 timestamp=int(libtime.time())
             )
         except Exception as e:
-            import logging
-            logging.basicConfig(
-                filename='/tmp/debug_event.log',
-                filemode='a',  # tambahkan log, jangan timpa file
-                level=logging.DEBUG,
-                format='[%(asctime)s] %(levelname)s: %(message)s',
-                datefmt='%Y-%m-%d %H:%M:%S'
-            )
-            logging.debug(f"error: {e}")
+            _log.exception(e)
 
 
     # runs from GUI thread.
