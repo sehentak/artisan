@@ -58,7 +58,7 @@ def mqtt_send_tlv(
             payload += encode_tlv_str(TAG_SESSION_ID, session_id)
 
         log += f"Payload: {payload}\n"
-        mqtt.send(payload, 'vulca/roasting/' + MACHINE_ID)
+        mqtt.send(payload, topic='vulca/roasting/' + MACHINE_ID)
     except Exception as e:
         log += f"Error: {e}\n"
     
