@@ -39,6 +39,7 @@ import functools
 from bisect import bisect_right
 import psutil
 from psutil._common import bytes2human # pyright:ignore[reportPrivateImportUsage]
+from vulca.send_data import mqtt_send_tlv
 
 from typing import Final, Optional, List, Set, Dict, Callable, Tuple, Union, Any, Sequence, cast, TYPE_CHECKING  #for Python >= 3.9: can remove 'List' since type hints can now use the generic 'list'
 
@@ -5320,6 +5321,23 @@ class tgraphcanvas(FigureCanvas):
 
         except Exception as e: # pylint: disable=broad-except
             _log.exception(e)
+
+        if idx is not None and 0 <= idx < len(temp1) and 0 <= idx < len(temp2):
+            et_val = temp1[idx] if temp1[idx] not in [None, -1] else 0
+            bt_val = temp2[idx] if temp2[idx] not in [None, -1] else 0
+            delta_et_val = delta1[idx] if delta1 and delta1[idx] not in [None, -1] else 0
+            delta_bt_val = delta2[idx] if delta2 and delta2[idx] not in [None, -1] else 0
+
+            mqtt_send_tlv(
+                et=et_val,
+                bt=bt_val,
+                delta_et=delta_et_val,
+                delta_bt=delta_bt_val,
+                airflow=self.aw.airflow_rpm if hasattr(self.aw, "airflow_rpm") else 0,
+                drum_speed=self.aw.drumspeed_rpm if hasattr(self.aw, "drumspeed_rpm") else 0,
+                timestamp=int(libtime.time())
+            )
+
 
     # runs from GUI thread.
     # this function is called by a signal at the end of the thread sample() from sample_processing()
